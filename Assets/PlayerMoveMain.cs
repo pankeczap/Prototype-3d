@@ -5,11 +5,28 @@ using UnityEngine;
 public class PlayerMoveMain : MonoBehaviour
 {
 
+    InputActions input;
+
+    private void Awake()
+    {
+        input = new InputActions();
+    }
+
+    private void OnEnable()
+    {
+        input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        input.Disable();
+    }
+
     //Yoinked from here https://docs.unity3d.com/ScriptReference/CharacterController.Move.html
 
     //did change things
 
-        private CharacterController controller;
+    private CharacterController controller;
         private Vector3 playerVelocity;
         private bool groundedPlayer;
         private float playerSpeed = 5.0f;
@@ -29,7 +46,7 @@ public class PlayerMoveMain : MonoBehaviour
                 playerVelocity.y = 0f;
             }
 
-            Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            Vector3 move = new Vector3(input.Player.Move.ReadValue<Vector2>().x, 0, input.Player.Move.ReadValue<Vector2>().y);
             controller.Move(move * Time.deltaTime * playerSpeed);
 
             if (move != Vector3.zero)
@@ -38,7 +55,7 @@ public class PlayerMoveMain : MonoBehaviour
             }
 
             // Changes the height position of the player..
-            if (Input.GetKey(KeyCode.Space) && groundedPlayer)
+            if (input.Player.Jump.ReadValue<float>() > 0 && groundedPlayer)
             {
                 playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
             }
